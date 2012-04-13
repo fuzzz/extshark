@@ -1,0 +1,7 @@
+#;No.;Time;Source;Destination;Protocol;Info;
+0;1;0.000000;90.133.231.130;193.12.150.26;GTP <DNS>;Standard query A mmsc.tele2.ru;
+1;2;4.958964;90.133.231.130;212.247.152.26;GTP <DNS>;Standard query A mmsc.tele2.ru;
+2;3;9.937973;90.133.231.130;193.12.150.26;GTP <DNS>;Standard query A mmsc.tele2.ru;
+3;4;14.941023;90.133.231.130;212.247.152.26;GTP <DNS>;Standard query A mmsc.tele2.ru;
+4;5;19.965573;90.133.231.130;193.12.150.26;GTP <DNS>;Standard query A mmsc.tele2.ru;
+5;6;24.953102;90.133.231.130;212.247.152.26;GTP <DNS>;Standard query A mmsc.tele2.ru;
