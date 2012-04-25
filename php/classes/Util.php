@@ -1,14 +1,10 @@
 <?php
 /* Various methods will be here */
 class Util {
-    function loadDumpDir($params){
+    function loadDumpDir(){
 	$response = array();
         $response['data'] = array();
-        $response['data_v'] = array();
-        $response['data_k'] = array();
         $response['success'] = true;
-	$no=$params->no;
-	$file=$params->file;
 	$pinfo=pathinfo($_SERVER['SCRIPT_FILENAME']);
 	$dir=$pinfo['dirname'].'/../data/dumps';
 	$tree=$this->getFilesFromDir($dir);
