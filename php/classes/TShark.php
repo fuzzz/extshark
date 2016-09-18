@@ -1,4 +1,6 @@
 <?php
+
+ error_reporting(E_ALL);
 /* Main server class.
    Any operation with console tshark */
 class TShark {
@@ -10,6 +12,7 @@ class TShark {
         $start=$params->start;
         $limit=$params->limit;
         $filter=$params->filter;
+
 	$file=$params->file;
 	$safe_filter=preg_replace('/[\\"\\\\\\*\\/\\?~]/','',$filter); //Remove special characters
 	$pinfo=pathinfo($_SERVER['SCRIPT_FILENAME']);
@@ -21,7 +24,7 @@ class TShark {
         $view=$cache_dir.'/view_'.$safe_filter.'.csv';
 	if($filter){
 	    /* Trick to check syntax of filter */
-	    $cmd='tshark -r ../data/s/test.pcap -c 1 -R "'.$filter.'" 2>&1';
+	    $cmd='tshark -r ../data/s/test.pcap -c 1 -Y "'.$filter.'" 2>&1';
 	    exec($cmd,$out,$status);
 	    if($status){
 		err('Error status '.$status.' returned in cmd:<br>'.$cmd.'<br>Output:<br>'.join("\n",$out));
@@ -31,8 +34,9 @@ class TShark {
 	/* Start caching
 	   This code do CSV file of current 'view' */
         if(!file_exists($view)){
-            mkdir($cache_dir,'77777',true);
-	    $cmd='(tshark -r '.$dump.' -T psml -R "'.$filter.'" | '.$pinfo['dirname'].'/../scripts/do_psml.pl '.$view.') >/dev/null &';
+           $dircreate=mkdir($cache_dir,'77777',true);
+	    $cmd='(tshark -r '.$dump.' -T psml -2 -R "'.$filter.'" | '.$pinfo['dirname'].'/../scripts/do_psml.pl '.$view.') >/dev/null &';
+
 	    system($cmd);
         }
 	
@@ -41,16 +45,20 @@ class TShark {
 	   or availability of the required rows */
 	$flag=true;
 	while($flag){
-	    if(file_get_contents($view.'.psml.status')){$flag=true;break;}
+	    if(file_get_contents($view.'.psml.status')){
+	    	$flag=true;break;
+	    }
 	    clearstatcache();
 	    if(filesize($view)>500){
-		$fp=fopen($view,'r');
-		fseek($fp,-450,SEEK_END);
-		fgets($fp);
-		$str=fgets($fp);
-		fclose($fp);
-		$record=preg_split('/;/',$str);
-		if($record[0]>($start+$limit)){$flag=true;break;}
+			$fp=fopen($view,'r');
+			fseek($fp,-450,SEEK_END);
+			fgets($fp);
+			$str=fgets($fp);
+			fclose($fp);
+			$record=preg_split('/;/',$str);
+			if($record[0]>($start+$limit)){
+				$flag=true;break;
+			}
 	    }
 	    sleep(1);
 	}
@@ -62,6 +70,7 @@ class TShark {
 	$pointer=round($filesize/2);
 	$elsize=$pointer;
 	$founded=false;$k=0;
+
 	//Binary search
 	while(!$founded){
 	    $k++;
@@ -116,6 +125,10 @@ class TShark {
         $response['total']=$record[0]+1;
 	return $response;
     }
+
+
+
+
     /* This method calls when outputing packet detail info in Ext.tree.Panel */
     function loadPacket($params){
 	$response = array();
@@ -175,3 +188,4 @@ class TShark {
 	return $ret;
     }
 }
+?>
