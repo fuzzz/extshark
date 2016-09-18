@@ -1,4 +1,5 @@
 <?php
+
 /* It is component of ExtJS */
 require('config.php');
 require('function.php');
@@ -10,13 +11,17 @@ class BogusAction {
 	public $data;
 	public $tid;
 }
-
 $isForm = false;
 $isUpload = false;
+
+// HTTP_RAW_POST_DATA was DEPRECATED in PHP 5.6.0, and REMOVED as of PHP 7.0.0.
+$HTTP_RAW_POST_DATA= file_get_contents( 'php://input' );
+
 if(isset($HTTP_RAW_POST_DATA)){
 	header('Content-Type: text/javascript');
 	$data = json_decode($HTTP_RAW_POST_DATA);
 }else if(isset($_POST['extAction'])){ // form post
+
 	$isForm = true;
 	$isUpload = $_POST['extUpload'] == 'true';
 	$data = new BogusAction();
@@ -25,7 +30,7 @@ if(isset($HTTP_RAW_POST_DATA)){
     $data->tid = isset($_POST['extTID']) ? $_POST['extTID'] : null; // not set for upload
 	$data->data = array($_POST, $_FILES);
 }else{
-	die('Invalid request.');
+	die('Invalid request');
 }
 
 function doRpc($cdata){
@@ -102,3 +107,5 @@ if($isForm && $isUpload){
 }else{
 	echo json_encode($response);
 }
+
+?>
