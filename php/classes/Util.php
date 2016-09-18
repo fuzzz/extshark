@@ -6,7 +6,9 @@ class Util {
         $response['data'] = array();
         $response['success'] = true;
 	$pinfo=pathinfo($_SERVER['SCRIPT_FILENAME']);
+	
 	$dir=$pinfo['dirname'].'/../data/dumps';
+
 	$tree=$this->getFilesFromDir($dir);
 	$root=array(
 	    'text'=>'Root',
@@ -33,8 +35,16 @@ class Util {
 		    array_push($ret,$itt);
 		}
 	    } 
-	    closedir($handle); 
+	    closedir($handle);
 	} 
 	return $ret; 
     } 
+    function debug_to_console( $data ) {
+    	if ( is_array( $data ) )
+        	$output = "<script>console.log( 'Debug Objects: " . implode( ',', $data) . "' );</script>";
+    	else
+        	$output = "<script>console.log( 'Debug Objects: " . $data . "' );</script>";
+
+    	echo $output;
+    }
 }
