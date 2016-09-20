@@ -1,0 +1,50 @@
+#!/bin/bash
+
+WEBROOT='/usr/share/extshark_temp/htdocs'
+APACHECONF='/etc/apache2/conf-available/extshark_temp.conf'
+ETC='/etc/extshark'
+
+if [ $LOGNAME != "root" ]; then
+        echo "Please run this script as root!"
+        exit 1
+fi
+
+
+if [ ! -f $WEBROOT ]; then
+	mkdir -p $WEBROOT
+fi
+
+if [ ! -f $ETC ]; then
+	mkdir -p $ETC
+fi
+
+cp -rvf ./* $WEBROOT
+
+printf "Alias /extshark /usr/share/extshark/htdocs
+
+<DirectoryMatch (/usr/share/exthark/htdocs)>
+        Options FollowSymLinks
+
+        DirectoryIndex index.php index.html
+
+        AllowOverride AuthConfig
+        Order Allow,Deny
+        Allow From All
+
+        AuthName \"extshark Access\"
+        AuthType Basic
+        AuthUserFile $ETC/htpasswd.users
+
+        require valid-user
+</DirectoryMatch>
+
+<Directory /usr/share/extshark/htdocs>
+        Options +ExecCGI
+</Directory>" > $APACHECONF
+
+htpasswd -b -c $ETC/htpasswd.users admin password
+
+
+
+
+
