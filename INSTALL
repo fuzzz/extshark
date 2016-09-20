@@ -1,19 +1,20 @@
 #!/bin/bash
+
+# if you want to call the program something different change the Alias variable below
 ALIAS='extshark'
+
+# there should be no need but if you want to change where things are stored do so here
 WEBROOT='/usr/share/'$ALIAS'/htdocs'
 APACHECONF='/etc/apache2/conf-available/'$ALIAS'.conf'
 ETC='/etc/'$ALIAS
 
-echo $WEBROOT
-echo $APACHECONF
-echo $ETC
-
+#make sure that the script is being run as root
 if [ $LOGNAME != "root" ]; then
         echo "Please run this script as root!"
         exit 1
 fi
 
-
+# create directory if not already created
 if [ ! -f $WEBROOT ]; then
 	mkdir -p $WEBROOT
 fi
@@ -22,8 +23,19 @@ if [ ! -f $ETC ]; then
 	mkdir -p $ETC
 fi
 
+# copy files to proper directory (take out the v if you dont want verbose)
 cp -rvf ./* $WEBROOT
 
+#TODO write script to run through directorys and check for proper permissions
+#
+
+# if a different alias is used change the page title as well as anything thing else called ExtShark
+if[ "$ALIAS" != "extshark" ]; then
+	sed -i "s/ExtShark/$ALIAS/g" $WEBROOT/index.*
+fi
+
+
+# add configuration file to apache conf-available
 printf "Alias /$ALIAS $WEBROOT
 
 <DirectoryMatch ($WEBROOT)>
@@ -46,11 +58,15 @@ printf "Alias /$ALIAS $WEBROOT
         Options +ExecCGI
 </Directory>" > $APACHECONF
 
+#create default user with very vary bad password 
+
 htpasswd -b -c $ETC/htpasswd.users admin password
 
+#navigate to apache confs directory and enable site
 cd /etc/apache2/conf-available
 a2enconf $ALIAS
 
+#get out of here
 exit 0
 
 
