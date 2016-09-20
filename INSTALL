@@ -26,11 +26,14 @@ fi
 # copy files to proper directory (take out the v if you dont want verbose)
 cp -rvf ./* $WEBROOT
 
+chgrp www-data $WEBROOT/data
+chmod g+w $WEBROOT/data
+
 #TODO write script to run through directorys and check for proper permissions
 #
 
 # if a different alias is used change the page title as well as anything thing else called ExtShark
-if[ "$ALIAS" != "extshark" ]; then
+if [ "$ALIAS" != "extshark" ]; then
 	sed -i "s/ExtShark/$ALIAS/g" $WEBROOT/index.*
 fi
 
